@@ -1,0 +1,19 @@
+ # tasks file for k3s-cluster
+ 
+ - name: check previous  k3s installation
+   stat:
+     path: /usr/local/bin/kubectl
+   register: kubectl
+ 
+ - name: install k3s config
+   get_url:
+     url: https://get.k3s.io
+     dest: /tmp/k3.sh
+     mode: '0660'
+   when: not kubectl.stat.exists
+ 
+ - name: install k3s
+   command: bash /tmp/k3.sh
+   become: yes
+   become_user: root
+   when: not kubectl.stat.exists
